@@ -44,6 +44,7 @@ begin
                     Put_Line ("Please select 2 polys to add together");
                     option1 := Integer'Value (Get_Line);
                     option2 := Integer'Value (Get_Line);
+                    Put ("The result is:");
                     writePOLY (addPOLY (GetPoly (option1), GetPoly (option2)));
                 else
                     Put_Line

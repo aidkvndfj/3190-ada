@@ -21,7 +21,8 @@ package polylink is
     procedure readPOLY;
 
     procedure writePOLY (num : in Integer);
-    -- Print the contents of the polynomial
+    -- Print the contents of the polynomial at num
+
     procedure writePOLY (poly : in Polynomial);
     -- Print the contents of the polynomial
 

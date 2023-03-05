@@ -1,8 +1,6 @@
---  The subprogram addpoly(a,b), which adds two polynomials together, i.e. a+b.
---  • The subprogram subpoly(a,b), which subtracts one polynomial from another, i.e.
---  a-b.
---  • The subprogram multpoly(a,b), which multiplies one polynomial by another, i.e.
---  a*b.
+--TODO:
+--  • The subprogram subpoly(a,b), which subtracts one polynomial from another
+--  • The subprogram multpoly(a,b), which multiplies one polynomial by another
 
 package body polymath is
     function addPOLY (a : Polynomial; b : Polynomial) return Polynomial is

@@ -61,24 +61,8 @@ package body polylink is
     end readPOLY;
 
     procedure writePOLY (num : in Integer) is
-        CurrTerm  : TermPtr := polyArray (num).Head;
-        firstDone : Boolean := False;
     begin
-        if (CurrTerm = null) then
-            Put_Line ("There is no poly to display");
-        end if;
-
-        while CurrTerm /= null loop
-            if (CurrTerm.Coefficient > 0.0 and firstDone) then
-                Put ("+");
-            end if;
-
-            Put (CurrTerm.Coefficient, Exp => 0, Aft => 3);
-            Put ("x^" & CurrTerm.Exponent'Img & " ");
-            CurrTerm  := CurrTerm.Next;
-            firstDone := True;
-        end loop;
-        New_Line;
+        writePOLY (polyArray (num));
     end writePOLY;
 
     procedure writePOLY (poly : in Polynomial) is
@@ -94,7 +78,10 @@ package body polylink is
                 Put ("+");
             end if;
 
-            Put (CurrTerm.Coefficient, Exp => 0, Aft => 3);
+            if (CurrTerm.Coefficient /= 1.0) then
+                Put (CurrTerm.Coefficient, Exp => 0, Aft => 3);
+            end if;
+
             Put ("x^" & CurrTerm.Exponent'Img & " ");
             CurrTerm  := CurrTerm.Next;
             firstDone := True;
