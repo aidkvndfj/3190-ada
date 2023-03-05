@@ -10,11 +10,15 @@ package body polylink is
         foundSpot       : Boolean := False;
         replaceLocation : Integer := 0;
     begin
+        -- Prompt the user to enter the coefficient and exponent
         Put_Line ("Please enter the Coefficient followed by the Exponent");
         Put_Line
            ("When you have inputted all of the values, press enter and it will bring you back to the main menu");
         replaceLocation := 0;
+
+        -- loop untill the users enters and chars and causes and exception to occurr
         while True loop
+            -- Increment replaceLocation and prompt the user to enter the coefficient and exponent
             replaceLocation := replaceLocation + 1;
             Put_Line ("Please enter Coefficient" & replaceLocation'Img);
             tempCoefficent := Float'Value (Get_Line);
@@ -31,6 +35,7 @@ package body polylink is
             foundSpot       := False;
             replaceLocation := 0;
 
+            -- Iterate over the polynomial array and check if any spot is free to store a new polynomial
             for J in polyArray'Range loop
                 if (polyArray (J).Head = null) then
                     polyArray (J) := tempPoly;
@@ -39,25 +44,25 @@ package body polylink is
                 end if;
             end loop;
 
+            -- If no spot is free, ask the user to enter the location where the polynomial is to be replaced and replace it
             if (not foundSpot) then
+
+                -- get the location
                 Put_Line
                    ("All polynomial spots are full, please enter a number from 1-5 representing the polynomial to replace.");
-
-                for J in polyArray'Range loop
-                    writePOLY (J);
-                end loop;
+                DisplayAll;
                 replaceLocation := Integer'Value (Get_Line);
 
+                -- Validate the input and prompt the user to enter a valid number between 1 and 5
                 while (replaceLocation <= 0 and replaceLocation > 5) loop
                     Put_Line
                        ("Invalid number, please enter a number from 1-5");
                     replaceLocation := Integer'Value (Get_Line);
                 end loop;
 
+                -- Replace the specified polynomial with the new polynomial
                 polyArray (replaceLocation) := tempPoly;
-
             end if;
-
     end readPOLY;
 
     procedure writePOLY (num : in Integer) is
@@ -69,19 +74,24 @@ package body polylink is
         CurrTerm  : TermPtr := poly.Head;
         firstDone : Boolean := False;
     begin
+        --inform user if the polynomial is empty
         if (CurrTerm = null) then
             Put_Line ("There is no poly to display");
         end if;
 
+        -- loop untill the end of the polynomial
         while CurrTerm /= null loop
-            if (CurrTerm.Coefficient > 0.0 and firstDone) then
+            -- print a + if positive number
+            if (CurrTerm.Coefficient => 0.0 and firstDone) then
                 Put ("+");
             end if;
 
+            -- print the coefficient if it's not exactly 1
             if (CurrTerm.Coefficient /= 1.0) then
                 Put (CurrTerm.Coefficient, Exp => 0, Aft => 3);
             end if;
 
+            -- print the exponent
             Put ("x^" & CurrTerm.Exponent'Img & " ");
             CurrTerm  := CurrTerm.Next;
             firstDone := True;
@@ -99,10 +109,11 @@ package body polylink is
         LastTerm : TermPtr := P.Head;
 
     begin
-
+        -- if the head is empty put new term at the head
         if LastTerm = null then
             P.Head := NewTerm;
         else
+            -- otherwise loop to the end of the polynomial and add the term
             while LastTerm.Next /= null loop
                 LastTerm := LastTerm.Next;
             end loop;
@@ -116,10 +127,13 @@ package body polylink is
         PrevTerm : TermPtr := null;
         CurrTerm : TermPtr := P.Head;
     begin
+        -- loop through the polynomial
         while CurrTerm /= null loop
+            -- make sure the coefficient and exponent are the same as the requested.
             if CurrTerm.Coefficient = Coefficient and
                CurrTerm.Exponent = Exponent
             then
+                -- remove term
                 if PrevTerm = null then
                     P.Head := CurrTerm.Next;
                 else
@@ -136,6 +150,7 @@ package body polylink is
         CurrTerm : TermPtr := P.Head;
         NextTerm : TermPtr;
     begin
+        -- loop through polynomial and delete each term
         while CurrTerm /= null loop
             NextTerm := CurrTerm.Next;
             DeleteTerm (CurrTerm);
@@ -150,38 +165,48 @@ package body polylink is
     end GetPoly;
 
     function SortPoly (L : Polynomial) return Polynomial is
-        tmpPoly     : Polynomial := L;
-        Sorted_List : Polynomial;
+        tmpPoly    : Polynomial := L;
+        sortedList : Polynomial;
     begin
+        -- loop through the polynomial
         while tmpPoly.Head /= null loop
+
+            -- create vars tosort
             declare
-                Max_Node  : TermPtr := tmpPoly.Head;
-                Curr_Node : TermPtr := Max_Node.Next;
-                Prev_Node : TermPtr := Max_Node;
+                maxTerm  : TermPtr := tmpPoly.Head;
+                currTerm : TermPtr := maxTerm.Next;
+                lastTerm : TermPtr := maxTerm;
             begin
-                while Curr_Node /= null loop
-                    if Curr_Node.Exponent > Max_Node.Exponent then
-                        Max_Node       := Curr_Node;
-                        Prev_Node.Next := Max_Node.Next;
+                -- loop through poly
+                while currTerm /= null loop
+                    -- if the current is > then the max, set max
+                    if currTerm.Exponent > maxTerm.Exponent then
+                        maxTerm       := currTerm;
+                        lastTerm.Next := maxTerm.Next;
                     else
-                        Prev_Node := Curr_Node;
+                        lastTerm := currTerm;
                     end if;
-                    Curr_Node := Curr_Node.Next;
+                    currTerm := currTerm.Next;
                 end loop;
-                Append (Sorted_List, Max_Node.Coefficient, Max_Node.Exponent);
-                Remove (tmpPoly, Max_Node.Coefficient, Max_Node.Exponent);
+
+                -- at the end, add the max term to the sorted list and remove it from the tmp poly
+                Append (sortedList, maxTerm.Coefficient, maxTerm.Exponent);
+                Remove (tmpPoly, maxTerm.Coefficient, maxTerm.Exponent);
             end;
         end loop;
-        return Sorted_List;
+        return sortedList;
     end SortPoly;
 
     function DisplayAll return Boolean is
         tmp     : Polynomial;
         counter : Integer := 0;
     begin
+        -- loop through the poly list
         for j in polyArray'Range loop
             tmp := polyArray (j);
             Put (j'Img & ": ");
+
+            -- print empty if null, otherwise write the polynomial
             if (tmp.Head = null) then
                 Put_Line ("Empty");
                 counter := counter + 1;
@@ -191,6 +216,7 @@ package body polylink is
 
         end loop;
 
+        -- return false if there is less then 2 polynomials. Useful to check before an add/subtract/multiply.
         if (counter >= 2) then
             return True;
         else
