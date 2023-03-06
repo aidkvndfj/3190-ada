@@ -31,6 +31,10 @@ package polylink is
        (P : in out Polynomial; Coefficient : in Float; Exponent : in Integer);
     -- Add a new term with the given coefficient and exponent to the end of the polynomial
 
+    procedure Add
+       (P : in out Polynomial; Coefficient : in Float; Exponent : in Integer);
+    -- Try to add the coefficient to an already existing exponent to the polynomial
+
     procedure Remove
        (P : in out Polynomial; Coefficient : in Float; Exponent : in Integer);
     -- Remove the first term with the given coefficient and exponent from the polynomial

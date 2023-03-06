@@ -24,7 +24,6 @@ package body polylink is
             tempCoefficent := Float'Value (Get_Line);
             Put_Line ("Please enter Exponent" & replaceLocation'Img);
             tempExponent := Integer'Value (Get_Line);
-
             Append (tempPoly, tempCoefficent, tempExponent);
         end loop;
 
@@ -50,7 +49,10 @@ package body polylink is
                 -- get the location
                 Put_Line
                    ("All polynomial spots are full, please enter a number from 1-5 representing the polynomial to replace.");
-                DisplayAll;
+                if not DisplayAll then
+                    Put_Line
+                       ("BIG ERROR, SOMETHING IS BROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                end if;
                 replaceLocation := Integer'Value (Get_Line);
 
                 -- Validate the input and prompt the user to enter a valid number between 1 and 5
@@ -82,7 +84,7 @@ package body polylink is
         -- loop untill the end of the polynomial
         while CurrTerm /= null loop
             -- print a + if positive number
-            if (CurrTerm.Coefficient => 0.0 and firstDone) then
+            if (CurrTerm.Coefficient >= 0.0 and firstDone) then
                 Put ("+");
             end if;
 
@@ -120,6 +122,42 @@ package body polylink is
             LastTerm.Next := NewTerm;
         end if;
     end Append;
+
+    procedure Add
+       (P : in out Polynomial; Coefficient : in Float; Exponent : in Integer)
+    is
+        NewTerm : TermPtr :=
+           new Term'
+              (Coefficient => Coefficient, Exponent => Exponent, Next => null);
+
+        LastTerm  : TermPtr := P.Head;
+        FoundSame : Boolean := False;
+
+    begin
+        -- if the head is empty put new term at the head
+        if LastTerm = null then
+            P.Head := NewTerm;
+        else
+            -- otherwise loop to the end of the polynomial and add the term
+            loop
+                Put_Line (LastTerm.Exponent'Img & "  " & NewTerm.Exponent'Img);
+                if (LastTerm.Exponent = NewTerm.Exponent) then
+                    LastTerm.Coefficient :=
+                       LastTerm.Coefficient + NewTerm.Coefficient;
+                    FoundSame            := True;
+                    exit;
+                else
+                    if (LastTerm.Next = null) then
+                        exit;
+                    end if;
+                    LastTerm := LastTerm.Next;
+                end if;
+            end loop;
+            if (FoundSame = False) then
+                LastTerm.Next := NewTerm;
+            end if;
+        end if;
+    end Add;
 
     procedure Remove
        (P : in out Polynomial; Coefficient : in Float; Exponent : in Integer)
@@ -201,6 +239,7 @@ package body polylink is
         tmp     : Polynomial;
         counter : Integer := 0;
     begin
+        counter := 0;
         -- loop through the poly list
         for j in polyArray'Range loop
             tmp := polyArray (j);
@@ -217,7 +256,7 @@ package body polylink is
         end loop;
 
         -- return false if there is less then 2 polynomials. Useful to check before an add/subtract/multiply.
-        if (counter >= 2) then
+        if (counter <= 3) then
             return True;
         else
             New_Line;

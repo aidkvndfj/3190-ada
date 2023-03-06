@@ -15,6 +15,8 @@ procedure poly is
         Put_Line ("1. Input a polynomial");
         Put_Line ("2. Print a polynomial");
         Put_Line ("3. Add 2 polynomials");
+        Put_Line ("4. Subtract 2 polynomials");
+        Put_Line ("5. Multiply 2 polynomails");
 
     end PrintMenu;
 
@@ -41,11 +43,45 @@ begin
 
             when 3 =>
                 if DisplayAll = True then
-                    Put_Line ("Please select 2 polys to add together");
+                    Put_Line
+                       ("Please input the number of the first polynomial to be added");
                     option1 := Integer'Value (Get_Line);
+                    Put_Line
+                       ("Please input the number of the second polynomial to be added");
                     option2 := Integer'Value (Get_Line);
                     Put ("The result is:");
                     writePOLY (addPOLY (GetPoly (option1), GetPoly (option2)));
+                else
+                    Put_Line
+                       ("There are not enough polynomials, please have at least 2 and try again");
+                end if;
+
+            when 4 =>
+                if DisplayAll = True then
+                    Put_Line
+                       ("Please input the number of the first polynomial to be subtracted");
+                    option1 := Integer'Value (Get_Line);
+                    Put_Line
+                       ("Please input the number of the second polynomial to be subtracted from");
+                    option2 := Integer'Value (Get_Line);
+                    Put ("The result is:");
+                    writePOLY (subPOLY (GetPoly (option1), GetPoly (option2)));
+                else
+                    Put_Line
+                       ("There are not enough polynomials, please have at least 2 and try again");
+                end if;
+
+            when 5 =>
+                if DisplayAll = True then
+                    Put_Line
+                       ("Please input the number of the first polynomial to be multiplied");
+                    option1 := Integer'Value (Get_Line);
+                    Put_Line
+                       ("Please input the number of the second polynomial to be multiplied");
+                    option2 := Integer'Value (Get_Line);
+                    Put ("The result is:");
+                    writePOLY
+                       (multPOLY (GetPoly (option1), GetPoly (option2)));
                 else
                     Put_Line
                        ("There are not enough polynomials, please have at least 2 and try again");
