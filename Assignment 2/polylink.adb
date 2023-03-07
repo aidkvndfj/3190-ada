@@ -11,60 +11,62 @@ package body polylink is
         replaceLocation : Integer := 0;
     begin
         -- Prompt the user to enter the coefficient and exponent
-        Put_Line ("Please enter the Coefficient followed by the Exponent");
         Put_Line
-           ("When you have inputted all of the values, press enter and it will bring you back to the main menu");
+           ("Please enter the max Coefficient followed by the Exponents");
+        Put_Line ("Please enter Exponent");
+        tempExponent := Integer'Value (Get_Line);
+
+        for i in reverse 0 .. tempExponent loop
+            --prompt the user to enter the coefficient and exponent
+            if (i > 0) then
+                Put_Line
+                   ("Please enter Coefficent for exponent" & i'Img & ":");
+            else
+                Put_Line ("Please enter the final Coefficent");
+            end if;
+            tempCoefficent := Float'Value (Get_Line);
+            Append (tempPoly, tempCoefficent, i);
+        end loop;
+        Put_Line ("Saving...");
+
+        foundSpot       := False;
         replaceLocation := 0;
 
-        -- loop untill the users enters and chars and causes and exception to occurr
-        while True loop
-            -- Increment replaceLocation and prompt the user to enter the coefficient and exponent
-            replaceLocation := replaceLocation + 1;
-            Put_Line ("Please enter Coefficient" & replaceLocation'Img);
-            tempCoefficent := Float'Value (Get_Line);
-            Put_Line ("Please enter Exponent" & replaceLocation'Img);
-            tempExponent := Integer'Value (Get_Line);
-            Append (tempPoly, tempCoefficent, tempExponent);
+        -- Iterate over the polynomial array and check if any spot is free to store a new polynomial
+        for J in polyArray'Range loop
+            if (polyArray (J).Head = null) then
+                polyArray (J) := tempPoly;
+                foundSpot     := True;
+                exit;
+            end if;
         end loop;
+
+        -- If no spot is free, ask the user to enter the location where the polynomial is to be replaced and replace it
+        if (not foundSpot) then
+
+            -- get the location
+            Put_Line
+               ("All polynomial spots are full, please enter a number from 1-5 representing the polynomial to replace.");
+            if not DisplayAll then
+                Put_Line
+                   ("BIG ERROR, SOMETHING IS BROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            end if;
+            replaceLocation := Integer'Value (Get_Line);
+
+            -- Validate the input and prompt the user to enter a valid number between 1 and 5
+            while (replaceLocation <= 0 and replaceLocation > 5) loop
+                Put_Line ("Invalid number, please enter a number from 1-5");
+                replaceLocation := Integer'Value (Get_Line);
+            end loop;
+
+            -- Replace the specified polynomial with the new polynomial
+            polyArray (replaceLocation) := tempPoly;
+        end if;
 
     exception
         when others =>
-            Put_Line ("Saving...");
-
-            foundSpot       := False;
-            replaceLocation := 0;
-
-            -- Iterate over the polynomial array and check if any spot is free to store a new polynomial
-            for J in polyArray'Range loop
-                if (polyArray (J).Head = null) then
-                    polyArray (J) := tempPoly;
-                    foundSpot     := True;
-                    exit;
-                end if;
-            end loop;
-
-            -- If no spot is free, ask the user to enter the location where the polynomial is to be replaced and replace it
-            if (not foundSpot) then
-
-                -- get the location
-                Put_Line
-                   ("All polynomial spots are full, please enter a number from 1-5 representing the polynomial to replace.");
-                if not DisplayAll then
-                    Put_Line
-                       ("BIG ERROR, SOMETHING IS BROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                end if;
-                replaceLocation := Integer'Value (Get_Line);
-
-                -- Validate the input and prompt the user to enter a valid number between 1 and 5
-                while (replaceLocation <= 0 and replaceLocation > 5) loop
-                    Put_Line
-                       ("Invalid number, please enter a number from 1-5");
-                    replaceLocation := Integer'Value (Get_Line);
-                end loop;
-
-                -- Replace the specified polynomial with the new polynomial
-                polyArray (replaceLocation) := tempPoly;
-            end if;
+            Put_Line
+               ("Invalid input, clearing polynomial and returning to menu");
     end readPOLY;
 
     procedure writePOLY (num : in Integer) is
@@ -89,12 +91,17 @@ package body polylink is
             end if;
 
             -- print the coefficient if it's not exactly 1
-            if (CurrTerm.Coefficient /= 1.0) then
+            if (CurrTerm.Coefficient /= 1.0 or CurrTerm.Exponent = 0) then
                 Put (CurrTerm.Coefficient, Exp => 0, Aft => 3);
             end if;
 
             -- print the exponent
-            Put ("x^" & CurrTerm.Exponent'Img & " ");
+            if (CurrTerm.Exponent > 1) then
+                Put ("x^" & CurrTerm.Exponent'Img & " ");
+            elsif (CurrTerm.Exponent /= 0) then
+                Put ("x ");
+            end if;
+
             CurrTerm  := CurrTerm.Next;
             firstDone := True;
         end loop;
@@ -138,7 +145,7 @@ package body polylink is
         if LastTerm = null then
             P.Head := NewTerm;
         else
-            -- otherwise loop to the end of the polynomial and add the term
+            -- otherwise loopThrough the poly looking for locations to add to term instead of making new term.
             loop
                 Put_Line (LastTerm.Exponent'Img & "  " & NewTerm.Exponent'Img);
                 if (LastTerm.Exponent = NewTerm.Exponent) then
@@ -234,6 +241,12 @@ package body polylink is
         end loop;
         return sortedList;
     end SortPoly;
+
+    procedure DisplayAll is
+        throw : Boolean;
+    begin
+        throw := DisplayAll;
+    end DisplayAll;
 
     function DisplayAll return Boolean is
         tmp     : Polynomial;

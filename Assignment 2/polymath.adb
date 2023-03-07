@@ -97,4 +97,16 @@ package body polymath is
         return resultPoly;
     end multPoly;
 
+    function evalPOLY (a : in Polynomial; x : in Float) return Float is
+        sum      : Float   := 0.0;
+        currTerm : TermPtr := a.Head;
+    begin
+        while currTerm /= null loop
+            sum      := sum + (x**currTerm.Exponent * currTerm.Coefficient);
+            currTerm := currTerm.Next;
+        end loop;
+
+        return sum;
+    end evalPOLY;
+
 end polymath;

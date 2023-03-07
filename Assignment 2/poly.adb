@@ -1,12 +1,15 @@
-with polylink;    use polylink;
-with polymath;    use polymath;
-with Ada.Text_IO; use Ada.Text_IO;
+with polylink;          use polylink;
+with polymath;          use polymath;
+with Ada.Text_IO;       use Ada.Text_IO;
+with Ada.Float_Text_IO; use Ada.Float_Text_IO;
 
 procedure poly is
     menuChoice : Integer;
     option1    : Integer;
     option2    : Integer;
+    evalSum    : Float;
 
+    -- Prints the menu options for the user to choose from
     procedure PrintMenu is
     begin
         Put_Line
@@ -17,6 +20,7 @@ procedure poly is
         Put_Line ("3. Add 2 polynomials");
         Put_Line ("4. Subtract 2 polynomials");
         Put_Line ("5. Multiply 2 polynomails");
+        Put_Line ("6. Evaluate a polynomial");
 
     end PrintMenu;
 
@@ -42,6 +46,7 @@ begin
                 writePOLY (Integer'Value (Get_Line));
 
             when 3 =>
+                -- Checks if there are at least two polynomials to add and performs addition
                 if DisplayAll = True then
                     Put_Line
                        ("Please input the number of the first polynomial to be added");
@@ -57,6 +62,7 @@ begin
                 end if;
 
             when 4 =>
+                -- Checks if there are at least two polynomials to subtract and performs subtraction
                 if DisplayAll = True then
                     Put_Line
                        ("Please input the number of the first polynomial to be subtracted");
@@ -72,6 +78,7 @@ begin
                 end if;
 
             when 5 =>
+                -- Checks if there are at least two polynomials to multiply and performs multiplication
                 if DisplayAll = True then
                     Put_Line
                        ("Please input the number of the first polynomial to be multiplied");
@@ -86,6 +93,19 @@ begin
                     Put_Line
                        ("There are not enough polynomials, please have at least 2 and try again");
                 end if;
+
+            when 6 =>
+                -- Evaluates a polynomial by taking user input for x value
+                DisplayAll;
+                Put_Line
+                   ("Please input the number of the polynomial to be evaluated");
+                option1 := Integer'Value (Get_Line);
+                Put_Line ("Please input what you would like x to be");
+                evalSum := Float'Value (Get_Line);
+                evalSum := evalPOLY (GetPoly (option1), evalSum);
+                Put ("The result is: ");
+                Put (evalSum, Exp => 0, Aft => 3);
+                New_Line;
 
             when others =>
                 Put_Line ("Invalid menu choice!");

@@ -51,6 +51,9 @@ package polylink is
     function DisplayAll return Boolean;
     -- Print the conents of all the polynomials in the list
 
+    procedure DisplayAll;
+    -- Print the conents of all the polynomials in the list
+
     procedure DeleteTerm is new Ada.Unchecked_Deallocation (Term, TermPtr);
     -- used to free a termptr
 
